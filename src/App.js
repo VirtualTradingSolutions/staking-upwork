@@ -258,7 +258,7 @@ function App() {
         />
         <div className="mid">
           <p style={{ color: "white", backgroundColor: "#1f6e85" }}>
-            TEST STAKING DAPP
+            TEST STAKING DAPP (Aziz)
           </p>
         </div>
         <div className="wallet1">
