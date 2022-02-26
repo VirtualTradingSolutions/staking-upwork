@@ -1,14 +1,4 @@
-/**
- *Submitted for verification at BscScan.com on 2022-02-26
-*/
 
-/**
- *Submitted for verification at BscScan.com on 2022-02-26
-*/
-
-/**
- *Submitted for verification at BscScan.com on 2022-02-25
-*/
 
 // SPDX-License-Identifier: MIT
 
@@ -774,9 +764,10 @@ contract Staking is Ownable {
             }
             user.amount = user.amount.add(_amount - fees);
         }
+        uint256 fees = _amount.mul(feesMultiplier).div(1000);
         user.rewardDebt = user.amount.mul(pool.accRewardPerShare).div(1e18);
         time[msg.sender] = block.timestamp + mintime;
-        totalStake += _amount;
+        totalStake += _amount - fees;
         emit Deposit(msg.sender, _amount);
     }
 
