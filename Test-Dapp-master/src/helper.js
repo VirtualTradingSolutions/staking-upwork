@@ -1,7 +1,7 @@
 export const chainID = 56;
 export const chainName = "Bsc Mainnet";
 export const StakeAddress = "0x5D569A459077e2FfF0716a27b8097AFf6668768c";
-export const TokenAddress = "0x4FcdF3BBc9fb408d63868562fA8Bd45F6DB87079";
+export const TokenAddress = "0x55a797ffFa3FD642A8F639e70665C24aeE015826";
 
 export const Stakeabi = [
   {
