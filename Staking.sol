@@ -675,21 +675,26 @@ contract Staking is Ownable {
 
     }
 
-    function stopReward() public onlyOwner {
-        rewardEndBlock = block.number;
-    }
+    
 
-    function changeminTime(uint256 _time) external onlyOwner {
+    function changeMinTime(uint256 _time) external onlyOwner {
         mintime = _time;
     }
 
-    function changeminStakingAmount(uint256 amount) external onlyOwner {
+    function changeMinStakingAmount(uint256 amount) external onlyOwner {
         minStakingAmount = amount;
     }
 
-    function adjustBlockEnd() public onlyOwner {
-        uint256 totalLeft = rewardToken.balanceOf(address(this));
-        rewardEndBlock = block.number + totalLeft.div(rewardPerBlock);
+    function adjustEndBlock( uint256 _blockNumber) public onlyOwner {
+        
+        rewardEndBlock = _blockNumber;
+    }
+    function adjuststartBlock (uint256 _blockNumber) public onlyOwner {
+        startBlock = _blockNumber;
+    }
+
+    function setFeeAddress (address feeReceive) public onlyOwner {
+        feeReceiver = feeReceive;
     }
 
     // Return reward multiplier over the given _from to _to block.
@@ -718,7 +723,7 @@ contract Staking is Ownable {
     }
 
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
+    function updatePool(uint256 _pid) private {
         PoolInfo storage pool = poolInfo[_pid];
         if (block.number <= pool.lastRewardBlock) {
             return;
@@ -745,10 +750,14 @@ contract Staking is Ownable {
 
     // Stake BaseToken tokens to SmartChef
     function deposit(uint256 _amount) public {
-        require(_amount >= minStakingAmount, "less than min amount");
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         updatePool(0);
+        if(user.amount == 0){
+            require (_amount>= minStakingAmount, "amount should greator than equal to min");
+
+        }
+
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accRewardPerShare).div(1e18).sub(user.rewardDebt);
             if(pending > 0) {
@@ -756,7 +765,7 @@ contract Staking is Ownable {
                 rewardToken.safeTransfer(address(msg.sender), pending);
             }
         }
-        if(_amount > 0) {
+             if (_amount > 0) {
             uint256 fees = _amount.mul(feesMultiplier).div(1000);
             pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount - fees);
             if (fees > 0) {
@@ -806,6 +815,14 @@ contract Staking is Ownable {
         emit Withdraw(msg.sender, _amount);
     }
 
-   
+    // Withdraw without caring about rewards. EMERGENCY ONLY.
+    function emergencyWithdraw() public {
+        PoolInfo storage pool = poolInfo[0];
+        UserInfo storage user = userInfo[msg.sender];
+        pool.lpToken.safeTransfer(address(msg.sender), user.amount);
+        user.amount = 0;
+        user.rewardDebt = 0;
+        emit EmergencyWithdraw(msg.sender, user.amount);
+    }
 
 }
