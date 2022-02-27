@@ -134,7 +134,7 @@ function App() {
   const loadBlockdata = async () => {
     try {
       provider = await web3Modal.connect();
-      connectwalletsuccess()
+      connectwalletsuccess('success')
     } catch (e) {
       console.log("Could not get a wallet connection", e);
       return;
