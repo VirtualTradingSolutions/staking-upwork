@@ -10,9 +10,9 @@ import {
 import Web3Modal from "web3modal";
 import Web3 from "web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import axios from "axios";
+import { useQuery } from "react-query";
 import { Button, notification } from 'antd';
-
-
 
 const ConnectWallet = type => {
   notification[type]({
@@ -22,14 +22,17 @@ const ConnectWallet = type => {
   });
 };
 
+
+let graph;
 let web3Modal;
 let provider;
 let web3;
+
 const connectwalletsuccess = type => {
   notification[type]({
     message: 'Wallet Notification!',
     description:
-    `You have Successfully Connected your Metamask Wallet!`
+      `You have Successfully Connected your Metamask Wallet!`
   });
 };
 async function init() {
@@ -83,18 +86,55 @@ function App() {
       fet();
     }
   }, [active]);
-  useEffect(() => {
-      async function fet() {
-        await init();
-        await loadBlockdata();
-      }
-      fet();
-  }, []);
+
+  const endpoint =
+    "https://api.thegraph.com/subgraphs/name/black-fire07/staking";
+  const DAPP_QUERY = `
+  {
+    dappEntities {
+      id
+      startBlock
+      endBlock
+      RewardBlock
+      totalstaked
+      lockperiod
+      mindeposit
+    }
+  }
+  `;
+
+  const { Graphdata, isLoading, error } = useQuery("launches", async () => {
+    const response = await axios({
+      url: endpoint,
+      method: "POST",
+      data: {
+        query: DAPP_QUERY,
+      },
+    });
+
+    graph = response.data.data["dappEntities"][0];
+    setminAmount(parseInt(graph.mindeposit / 1e18));
+    settotalStake(parseFloat(graph.totalstaked / 1e18).toFixed(2));
+    let time_ = Math.floor(graph.lockperiod / (24 * 60 * 60));
+    setday(time_);
+
+    let total_value_of_reward_token = parseFloat(
+      graph.RewardBlock / 1e18
+    ).toFixed(2);
+    total_value_of_reward_token =
+      total_value_of_reward_token * (graph.endBlock - graph.startBlock);
+    let apr_ =
+      total_value_of_reward_token /
+      parseFloat(graph.totalstaked / 1e18).toFixed(2);
+    setapr(parseFloat(apr_ * 100).toFixed(2));
+
+    return response.data.data;
+  });
 
   const loadBlockdata = async () => {
     try {
       provider = await web3Modal.connect();
-      connectwalletsuccess('success')
+      connectwalletsuccess()
     } catch (e) {
       console.log("Could not get a wallet connection", e);
       return;
@@ -145,17 +185,10 @@ function App() {
       total_value_of_reward_token =
         total_value_of_reward_token * (endblock - startblock);
 
-      const stakeamount = await Hell.methods.totalStake().call();
-
       let apr_ =
-        total_value_of_reward_token / parseFloat(stakeamount / 1e18).toFixed(2);
+        total_value_of_reward_token / parseFloat(totalstake / 1e18).toFixed(2);
       setapr(parseFloat(apr_ * 100).toFixed(2));
-      console.log(
-        apr_ * 100,
-        total_value_of_reward_token,
-        stakeamount,
-        rewardperblock
-      );
+
       const userinfo = await Hell.methods.userInfo(accounts[0]).call();
       setuserInfo(userinfo);
       console.log(userinfo.amount / 1e18);
@@ -195,19 +228,20 @@ function App() {
     notification[type]({
       message: 'Un-Stake Notification!',
       description:
-      `The Staking period has not ended. Please check back later!`
+        `The Staking period has not ended. Please check back later!`
     });
   };
   const UnStackNotificationDone = type => {
     notification[type]({
       message: 'Un-Stake Notification!',
       description:
-      `You have unstaked ${unstk} tokens! `
+        `You have unstaked ${unstk} tokens! `
     });
   };
-  
+
+
   const unStake1 = async (amount) => {
-    if(unstk != 0){
+    if (unstk != 0) {
       if (chainid === chainID) {
         amount = amount * 1000000000;
         amount = amount + "000000000";
@@ -226,21 +260,22 @@ function App() {
           UnStackNotification('error')
           setUnstakeloading(false)
         }
-      }else{
+      } else {
         ConnectWallet('info')
       }
-    }else{
-      emptyinut('warning','Unstaking')
+    } else {
+      emptyinut('warning', 'Unstaking')
     }
   };
+
   const Stack = type => {
     notification[type]({
       message: 'Wallet Notification!',
       description:
-      `Minimum staking amount is ${minAmount} $TEST`
+        `Minimum staking amount is ${minAmount} $TEST`
     });
   };
-  
+
 
   const Approve = async (amount) => {
     if (chainid === chainID) {
@@ -281,25 +316,27 @@ function App() {
       ConnectWallet('info')
     }
   };
+
   const StackApprove = type => {
     notification[type]({
       message: 'Stack Notification!',
       description:
-      `You have Successfully Staked ${stk} Tokens`
+        `You have Successfully Staked ${stk} Tokens`
     });
   };
-  const emptyinut = (type,data) => {
+  const emptyinut = (type, data) => {
     notification[type]({
       message: 'Notification!',
       description:
-      `The transaction could not proceed, as you have not entered a value in the ${data} box.`
+        `The transaction could not proceed, as you have not entered a value in the ${data} box.`
     });
   };
-  
- 
+
+
   const [stackLoading, setstackLoading] = useState(false)
+
   const Stake1 = async (amount) => {
-    if(stk != 0){
+    if (stk != 0) {
       let num = parseFloat(amount);
       amount = amount * 1000000000;
       if (num >= minAmount || userInfo.amount !== 0) {
@@ -322,17 +359,18 @@ function App() {
       } else {
         Stack('info')
       }
-    }else{
-      emptyinut('warning','Staking')
+    } else {
+      emptyinut('warning', 'Staking')
     }
   };
+
   const [claimloading, setClaimloading] = useState(false)
 
   const ClaimApprove1 = type => {
     notification[type]({
       message: 'Claim Notification!',
       description:
-      `Claiming Reward in Process!`
+        `Claiming Reward in Process!`
     });
   };
 
@@ -340,7 +378,7 @@ function App() {
     notification[type]({
       message: 'Claim Notification!',
       description:
-      `Reward Successfully Claimed!`
+        `Reward Successfully Claimed!`
     });
   };
 
@@ -362,7 +400,7 @@ function App() {
         setClaimloading(false)
         return;
       }
-    }else{
+    } else {
       ConnectWallet('info')
     }
   };
@@ -490,7 +528,7 @@ function App() {
               </p>
               </span>
               <span style={{ margin: "0" }}>
-                <Button
+              <Button
                   loading={claimloading}
                   className="new_button2"
                   onClick={() => {

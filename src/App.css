@@ -213,6 +213,13 @@ body::-webkit-scrollbar{
   width: 100%;
   padding: 16px;
   font-size: 14px;
+  background-color: #1f6e85;
+  border-radius: 15px;
+  border: 3px solid hsla(0,0%,100%,.1);
+  font-weight: 800;
+  color: white;
+  cursor: pointer;
+
   /*  */
 }
 .right{

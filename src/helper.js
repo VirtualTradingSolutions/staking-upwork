@@ -1,7 +1,7 @@
 export const chainID = 56;
 export const chainName = "Bsc Mainnet";
-export const StakeAddress = "0x5D569A459077e2FfF0716a27b8097AFf6668768c";
-export const TokenAddress = "0x55a797ffFa3FD642A8F639e70665C24aeE015826";
+export const StakeAddress = "0x4E45741E9bf91ee02010F21D60C50C384beBfAe1";
+export const TokenAddress = "0x2F917C9f6BB4186E57841f5747FCc3fEdf026b35";
 
 export const Stakeabi = [
   {
@@ -66,6 +66,20 @@ export const Stakeabi = [
       },
     ],
     name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "user", type: "address" },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "RewardClaim",
     type: "event",
   },
   {
@@ -249,6 +263,13 @@ export const Stakeabi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "time",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "totalStake",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
@@ -367,6 +388,26 @@ export const Tokenabi = [
     ],
     name: "Unpaused",
     type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "recipient", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "airdrop",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address[]", name: "newholders", type: "address[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+    ],
+    name: "airdropArray",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
@@ -507,4 +548,3 @@ export const Tokenabi = [
     type: "function",
   },
 ];
-
