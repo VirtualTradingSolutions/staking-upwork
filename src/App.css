@@ -58,7 +58,20 @@ body::-webkit-scrollbar{
   color: white !important;
   background: transparent !important;
   font-size: 14px !important;
-  border-radius: 10px !important;
+  border-radius: 15px !important;
+  background-color: #1f6e85 !important;
+  padding: 0px !important;
+  width: 40%;
+}
+.new_button2{
+  border: 3px solid rgba(255, 255, 255, 0.1) !important;
+  font-weight: 800 !important;
+  margin: auto !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 14px !important;
+  border-radius: 15px !important;
+  background-color: #1f6e85 !important;
   width: 100%;
 }
 
@@ -66,7 +79,7 @@ body::-webkit-scrollbar{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: auto 13%;
+  margin: auto 7%;
 }
 
 .new_middle p{
@@ -167,9 +180,8 @@ body::-webkit-scrollbar{
 }
 
 
-button{
+/* button{
   border-radius: 15px;
-  /* width: 60%; */
   border: 3px solid rgba(255, 255, 255, 0.1);
   font-weight: 800;
   margin: auto;
@@ -178,8 +190,7 @@ button{
   padding: 12px;
   background-color: #1f6e85;
   cursor: pointer;
-  /* box-shadow: 6px 6px #EDD1A6; */
-}
+} */
 
 .bottom p{
   font-size: larger;
@@ -187,9 +198,9 @@ button{
   letter-spacing: 1px;
 }
 
-button:active{
+/* button:active{
   transform: scale(0.9,0.9);
-}
+} */
 
 
 

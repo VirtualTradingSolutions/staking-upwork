@@ -83,6 +83,13 @@ function App() {
       fet();
     }
   }, [active]);
+  useEffect(() => {
+      async function fet() {
+        await init();
+        await loadBlockdata();
+      }
+      fet();
+  }, []);
 
   const loadBlockdata = async () => {
     try {
@@ -485,7 +492,7 @@ function App() {
               <span style={{ margin: "0" }}>
                 <Button
                   loading={claimloading}
-                  className="new_button"
+                  className="new_button2"
                   onClick={() => {
                     claim_t();
                   }}
