@@ -143,6 +143,7 @@ function App() {
 
     loadBlockdat();
   };
+  const [getwalletid,setwalletid] = useState('')
   const loadBlockdat = async () => {
     console.log("Web3 instance is", web3);
     let chain;
@@ -154,6 +155,7 @@ function App() {
       console.log("yes");
       const accounts = await new web3.eth.getAccounts();
       console.log(accounts[0]);
+      setwalletid(accounts[0])
       setaddress(accounts[0]);
       const Hell = new web3.eth.Contract(Stakeabi, StakeAddress);
       setHello(Hell);
@@ -404,7 +406,9 @@ function App() {
       ConnectWallet('info')
     }
   };
-
+ const getlast4didgit = getwalletid.slice(getwalletid.length - 4)
+ const first2didgit = getwalletid.slice(0, 2)
+  const newid = getwalletid != '' ? `${first2didgit}...${getlast4didgit}` : ''
   return (
     <div className="Container">
       <div className="App">
@@ -422,7 +426,7 @@ function App() {
           </div>
           <div className="wallet1">
             <button onClick={() => setactive(true)} className="wallet">
-              {chainid === chainID ? "CONNECTED" : "CONNECT WALLET"}
+              {chainid === chainID ? `${newid} CONNECTED` : "CONNECT WALLET"}
             </button>
           </div>
         </div>
